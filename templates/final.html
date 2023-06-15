@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Palette Generator</title>
+  <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+  <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <div class="banana">
+    <p>Drag one or more files to this DROP ZONE.</p>
+  </div>
+  <div class="dropzone-container">
+    {{ dropzone.create(action='upload') }}
+
+  </div>
+  {{ dropzone.load_js() }}
+  {{ dropzone.config() }}
+
+
+    {% if file_path %}
+  <div class="uploaded-photo">
+    <h3>Uploaded Photo:</h3>
+    <img src="{{ file_path }}" alt="Uploaded Photo">
+  </div>
+  {% endif %}
+  {% if color_palette %}
+
+  <div class="color-palette">
+    <h3>Color Palette:</h3>
+    <div id="color-plot"></div>
+
+     {% if reload_page %}
+    <script>
+        window.location.reload();
+    </script>
+{% endif %}
+
+    <script>
+
+      // Get the URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const reloadPage = urlParams.get('reload_page');
+
+
+<!--  // Check if the 'reload_page' parameter is set to 'true'-->
+<!--  if (reloadPage === 'true') {-->
+<!--    // Reload the page after a short delay-->
+<!--    setTimeout(() => {-->
+<!--      window.location.reload();-->
+<!--    }, 500); // Adjust the delay as needed-->
+<!--  }-->
+
+      var colorPalette = {{ color_palette|safe }};
+      var hexCodes = {{ hex_codes|safe }};
+      var trace = {
+        x: hexCodes,
+        marker: {
+          color: hexCodes
+        },
+        type: 'bar'
+      };
+      var layout = {
+        title: 'Color Palette',
+        showlegend: false,
+        xaxis: {
+          tickangle: -45
+        }
+      };
+      var data = [trace];
+      Plotly.newPlot('color-plot', data, layout);
+    </script>
+  </div>
+  {% endif %}
+
+<!--  <form action="/upload" method="post" enctype="multipart/form-data">-->
+<!--    <input type="file" name="file" accept="image/*">-->
+<!--    <input type="submit" value="Upload">-->
+<!--  </form>-->
+</body>
+</html>
+

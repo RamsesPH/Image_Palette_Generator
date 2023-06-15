@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!--Main section-->
+  <div class="banana">
+    <p>IMAGE COLOR PALETTE EXTRACT.</p>
+  </div>
+  <div class="dropzone-container">
+    {{ dropzone.create(action='upload') }}
+
+  </div>
+  <a href="{{ url_for('result') }}" class="btn btn-primary">Press to Process the Photo</a>
+
+  {{ dropzone.load_js() }}
+  {{ dropzone.config() }}
+
+
+    {% if file_path %}
+  <div class="uploaded-photo">
+    <h3>Uploaded Photo:</h3>
+    <img src="{{ file_path }}" alt="Uploaded Photo">
+  </div>
+  {% endif %}
+  {% if color_palette %}
+
+  <div class="color-palette">
+    <h3>Color Palette:</h3>
+    <div id="color-plot"></div>
+
+     {% if reload_page %}
+    <script>
+        window.location.reload();
+    </script>
+{% endif %}
+
+<!-- JS SCRIPT AREA -->
+    <script>
+      var colorPalette = {{ color_palette|safe }};
+      var hexCodes = {{ hex_codes|safe }};
+      var trace = {
+        x: hexCodes,
+        marker: {
+          color: hexCodes
+        },
+        type: 'bar'
+      };
+      var layout = {
+        title: 'Color Palette',
+        showlegend: false,
+        xaxis: {
+          tickangle: -45
+        }
+      };
+      var data = [trace];
+      Plotly.newPlot('color-plot', data, layout);
+    </script>
+  </div>
+  {% endif %}
+
+{% endblock content %}

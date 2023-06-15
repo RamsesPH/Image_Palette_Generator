@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="result">
+
+    {% if file_path %}
+  <div class="uploaded-photo">
+    <h3>Uploaded Photo:</h3>
+    <img src="{{ file_path }}" alt="Uploaded Photo">
+  </div>
+   <a href="{{ url_for('index') }}" class="btn btn-danger">Return to Loading Area</a>
+
+  {% endif %}
+  {% if color_palette %}
+
+  <div class="color-palette">
+    <h3>Color Palette:</h3>
+    <div id="color-plot"></div>
+
+     {% if reload_page %}
+    <script>
+        window.location.reload();
+    </script>
+{% endif %}
+
+    <script>
+      var colorPalette = {{ color_palette|safe }};
+      var hexCodes = {{ hex_codes|safe }};
+      var trace = {
+        x: hexCodes,
+        marker: {
+          color: hexCodes
+        },
+        type: 'bar'
+      };
+      var layout = {
+        /*title: 'Color Palette',*/
+        showlegend: false,
+        xaxis: {
+          tickangle: -45
+        }
+      };
+      var data = [trace];
+      Plotly.newPlot('color-plot', data, layout);
+    </script>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock content %}
